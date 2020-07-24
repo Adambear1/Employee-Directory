@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import API from "../utils/API";
 import {
   Navbar,
-  Nav,
-  NavDropdown,
+  ListGroup,
   Button,
   Form,
   FormControl,
@@ -13,13 +12,16 @@ import {
   Card,
   CardColumns,
   Modal,
+  Pagination,
 } from "react-bootstrap";
 import "./Navbar.css";
 
 const _Navbar = () => {
   //
   const [employee, setEmployee] = useState({});
-  const [country, setCountry] = useState({});
+  // const [country, setCountry] = useState({});
+  const [params, setParams] = useState({});
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     API.default()
@@ -58,14 +60,14 @@ const _Navbar = () => {
     );
   }
 
-  const apiCall = (country) => {
-    API.country(country)
-      .then((res) => {
-        setCountry(res.data);
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-  };
+  // const apiCall = (country) => {
+  //   API.country(country)
+  //     .then((res) => {
+  //       setCountry(res.data);
+  //       console.log(res.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // };
 
   return (
     <div>
@@ -92,29 +94,40 @@ const _Navbar = () => {
               return (
                 <Row>
                   <Col>
-                    <Card key={item.id.value}>
+                    <Card className="Card" key={item.id.value}>
                       <Card.Img
+                        className="cardImage"
                         variant="top"
-                        src={item.picture.large}
+                        src={item.picture.thumbnail}
                         alt={item.id.value}
                       />
-                      <Card.Body>
-                        <Card.Title>
-                          <strong className="nameHover" onClick={handleShow}>
-                            {item.name.first} {"       "}
-                            {item.name.last}
-                          </strong>
-                        </Card.Title>
-                        <Card.Text>
-                          This is a wider card with supporting text below as a
-                          natural lead-in to additional content. This content is
-                          a little bit longer.
-                        </Card.Text>
-                      </Card.Body>
+                      {/* <Card.Body> */}
+                      <Card.Title>
+                        <strong
+                          className="nameHover text-center"
+                          onClick={handleShow}
+                        >
+                          {item.name.first} {"       "}
+                          {item.name.last}
+                        </strong>
+                      </Card.Title>
+                      <ListGroup variant="flush">
+                        <ListGroup.Item>
+                          {"    "}
+                          <i class="fa fa-envelope" aria-hidden="true"></i>
+                          {item.email}
+                        </ListGroup.Item>
+                        <ListGroup.Item>
+                          {"    "}
+                          <i class="fa fa-phone" aria-hidden="true"></i>
+                          {item.phone}
+                        </ListGroup.Item>
+                      </ListGroup>
+                      {/* </Card.Body> */}
                       <Example />
                       <Card.Footer
                         className="apiCall"
-                        onClick={apiCall(item.location.country)}
+                        // onClick={apiCall(item.location.country)}
                       >
                         <small className="text-muted">
                           {item.location.state}
@@ -125,6 +138,7 @@ const _Navbar = () => {
                         </small>
 
                         <small className="text-muted float-right">
+                          {"DOB:"}
                           {item.dob.date.substr(0, 10)}
                         </small>
                         {"      "}
@@ -134,6 +148,15 @@ const _Navbar = () => {
                 </Row>
               );
             })}
+            <Pagination>
+              <Pagination.Previous />
+              <Pagination.Item> {page - 1}</Pagination.Item>
+              <Pagination.Item>1</Pagination.Item>
+              <Pagination.Ellipsis />
+              <Pagination.Item> active{page}</Pagination.Item>
+              <Pagination.Item> {page + 1}</Pagination.Item>
+              <Pagination.Next></Pagination.Next>
+            </Pagination>
           </CardColumns>
         ) : (
           <div>No items found</div>
